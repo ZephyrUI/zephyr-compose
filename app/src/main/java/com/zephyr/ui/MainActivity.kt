@@ -1,23 +1,16 @@
 package com.zephyr.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Transition
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,16 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceIn
 import com.zephyr.ui.ui.theme.PrimaryColor
 import com.zephyr.ui.ui.theme.TertiaryOne
 import com.zephyr.ui.ui.theme.ZephyrTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -69,7 +58,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+/**
+ * The element for displaying the button. The button has an indentation animation when pressed, as well as a color change animation.
+ * @param modifier The modifier to be applied to the layout.
+ * @param text The text to display on the button.
+ * @param backgroundColor The color of the button's background when inactive.
+ * @param pressedBackgroundColor The background color of the button when pressed.
+ * @param cornerRadius Rounding the edges of the button.
+ * @param softness The limit value for the scale effect when the button is pressed, it has a value from 0f to 1f, at 1f, the button size does not change in any way.
+ * */
 @Composable
 fun AnimatedButton(
     modifier: Modifier = Modifier,
@@ -82,7 +79,9 @@ fun AnimatedButton(
 ) {
 
     val scope = rememberCoroutineScope()
+
     val interactionSource = remember { MutableInteractionSource() }
+
     var isPressed by remember { mutableStateOf(false) }
     val scale = remember { Animatable(1f) }
 
