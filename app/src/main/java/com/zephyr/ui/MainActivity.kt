@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zephyr.foundations.core.theme.ZephyrTheme
 import com.zephyr.foundations.element.button.AnimateButton
+import com.zephyr.sample.SimplyButton
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,19 +25,7 @@ class MainActivity : ComponentActivity() {
 
             ZephyrTheme {
 
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    AnimateButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 30.dp),
-                        text = "Animated button",
-                        onClick = { }
-                    )
-                }
+                SimplyButton()
             }
         }
     }
