@@ -1,4 +1,4 @@
-package com.zephyr.ui.ui.theme
+package com.zephyr.foundations.core.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme

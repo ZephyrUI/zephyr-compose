@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ui-kit"
 include(":app")
+include(":foundations")
