@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceIn
+import com.zephyr.foundations.core.theme.DisableColor
 import com.zephyr.foundations.core.theme.PrimaryColor
 import com.zephyr.foundations.core.theme.TertiaryOne
 import kotlinx.coroutines.launch
@@ -30,15 +31,19 @@ import kotlinx.coroutines.launch
  * The element for displaying the button. The button has an indentation animation when pressed, as well as a color change animation.
  * @param modifier The modifier to be applied to the layout.
  * @param text The text to display on the button.
+ * @param enabled The button's activity status.
  * @param backgroundColor The color of the button's background when inactive.
  * @param pressedBackgroundColor The background color of the button when pressed.
  * @param cornerRadius Rounding the edges of the button.
  * @param softness The limit value for the scale effect when the button is pressed, it has a value from 0f to 1f, at 1f, the button size does not change in any way.
+ *
+ * @sample com.zephyr.sample.SimplyButton
  * */
 @Composable
 fun AnimateButton(
     modifier: Modifier = Modifier,
     text: String,
+    enabled: Boolean = true,
     backgroundColor: Color = TertiaryOne,
     pressedBackgroundColor: Color = PrimaryColor,
     cornerRadius: Dp = 8.dp,
@@ -57,7 +62,11 @@ fun AnimateButton(
 
     val buttonBackgroundColor by remember {
         derivedStateOf {
-            if (isPressed) pressedBackgroundColor else backgroundColor
+            if (enabled) {
+                if (isPressed) pressedBackgroundColor else backgroundColor
+            } else {
+                DisableColor
+            }
         }
     }
 
@@ -84,6 +93,7 @@ fun AnimateButton(
         modifier = modifier
             .graphicsLayer(scaleX = scale.value, scaleY = scale.value)
             .clickable(
+                enabled = enabled,
                 onClick = onClick,
                 onClickLabel = "Animated button",
                 indication = null,
