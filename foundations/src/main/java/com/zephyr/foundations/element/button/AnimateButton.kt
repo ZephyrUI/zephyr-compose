@@ -1,26 +1,22 @@
 package com.zephyr.foundations.element.button
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
@@ -53,16 +49,17 @@ fun AnimateButton(
     val scope = rememberCoroutineScope()
 
     val interactionSource = remember { MutableInteractionSource() }
-
     var isPressed by remember { mutableStateOf(false) }
+
     val scale = remember { Animatable(1f) }
 
-    var buttonSoftness by remember { mutableFloatStateOf(softness.fastCoerceIn(0.0f, 1.0f)) }
+    val buttonSoftness by remember { mutableFloatStateOf(softness.fastCoerceIn(0.0f, 1.0f)) }
 
-    val buttonBackgroundColor by animateColorAsState(
-        targetValue = if (isPressed) pressedBackgroundColor else backgroundColor,
-        label = "Button background color"
-    )
+    val buttonBackgroundColor by remember {
+        derivedStateOf {
+            if (isPressed) pressedBackgroundColor else backgroundColor
+        }
+    }
 
     LaunchedEffect(interactionSource) {
 
@@ -83,7 +80,7 @@ fun AnimateButton(
         }
     }
 
-    Box(
+    BaseButton(
         modifier = modifier
             .graphicsLayer(scaleX = scale.value, scaleY = scale.value)
             .clickable(
@@ -92,16 +89,9 @@ fun AnimateButton(
                 indication = null,
                 interactionSource = interactionSource
             ),
-        contentAlignment = Alignment.Center
+        backgroundColor = buttonBackgroundColor,
+        cornerRadius = cornerRadius
     ) {
-
-        Canvas(modifier = Modifier.matchParentSize()) {
-            drawRoundRect(
-                color = buttonBackgroundColor,
-                cornerRadius = CornerRadius(cornerRadius.toPx())
-            )
-        }
-
         Text(
             modifier = Modifier
                 .padding(
