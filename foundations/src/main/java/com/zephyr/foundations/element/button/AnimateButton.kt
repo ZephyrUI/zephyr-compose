@@ -2,9 +2,11 @@ package com.zephyr.foundations.element.button
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,8 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -32,10 +38,13 @@ import kotlinx.coroutines.launch
  * @param modifier The modifier to be applied to the layout.
  * @param text The text to display on the button.
  * @param enabled The button's activity status.
- * @param backgroundColor The color of the button's background when inactive.
- * @param pressedBackgroundColor The background color of the button when pressed.
+ * @param isOutline If `true`, the button will be rendered in an outline style (transparent background with a border).
+ * @param color The color of the button's background when inactive.
+ * @param pressedColor The background color of the button when pressed.
  * @param cornerRadius Rounding the edges of the button.
- * @param softness The limit value for the scale effect when the button is pressed, it has a value from 0f to 1f, at 1f, the button size does not change in any way.
+ * @param textColor The text's color on the button. Ignored if [isOutline] is `true`.
+ * @param softness The scale factor when the button is pressed. Must be between `0f` and `1f`.
+ * @param onClick The lambda to be executed when the button is clicked.
  *
  * @sample com.zephyr.sample.SimplyButton
  * */
@@ -44,8 +53,10 @@ fun AnimateButton(
     modifier: Modifier = Modifier,
     text: String,
     enabled: Boolean = true,
-    backgroundColor: Color = TertiaryOne,
-    pressedBackgroundColor: Color = PrimaryColor,
+    isOutline: Boolean = false,
+    color: Color = TertiaryOne,
+    pressedColor: Color = PrimaryColor,
+    textColor: Color = Color.White,
     cornerRadius: Dp = 8.dp,
     softness: Float = 0.98f,
     onClick: () -> Unit,
@@ -60,12 +71,35 @@ fun AnimateButton(
 
     val buttonSoftness by remember { mutableFloatStateOf(softness.fastCoerceIn(0.0f, 1.0f)) }
 
-    val buttonBackgroundColor by remember {
+    val buttonColor by remember {
         derivedStateOf {
-            if (enabled) {
-                if (isPressed) pressedBackgroundColor else backgroundColor
-            } else {
-                DisableColor
+            when {
+                isOutline && isPressed -> pressedColor.copy(alpha = 0.1f)
+                isOutline -> Color.Transparent
+                !enabled -> DisableColor
+                isPressed -> pressedColor
+                else -> color
+            }
+        }
+    }
+
+    val borderColor by remember {
+        derivedStateOf {
+            when {
+                !enabled -> DisableColor
+                isPressed -> pressedColor
+                else -> color
+            }
+        }
+    }
+
+    val buttonTextColor by remember {
+        derivedStateOf {
+            when {
+                isOutline && !enabled -> DisableColor
+                isOutline && isPressed -> pressedColor
+                isOutline && !isPressed -> color
+                else -> textColor
             }
         }
     }
@@ -89,7 +123,7 @@ fun AnimateButton(
         }
     }
 
-    BaseButton(
+    Box(
         modifier = modifier
             .graphicsLayer(scaleX = scale.value, scaleY = scale.value)
             .clickable(
@@ -99,9 +133,25 @@ fun AnimateButton(
                 indication = null,
                 interactionSource = interactionSource
             ),
-        backgroundColor = buttonBackgroundColor,
-        cornerRadius = cornerRadius
+        contentAlignment = Alignment.Center
     ) {
+
+        Canvas(modifier = Modifier.matchParentSize()) {
+
+            drawRoundRect(
+                color = buttonColor,
+                cornerRadius = CornerRadius(cornerRadius.toPx())
+            )
+
+            if (isOutline) {
+                drawRoundRect(
+                    color = borderColor,
+                    cornerRadius = CornerRadius(cornerRadius.toPx()),
+                    style = Stroke(width = 2.dp.toPx())
+                )
+            }
+        }
+
         Text(
             modifier = Modifier
                 .padding(
@@ -109,7 +159,7 @@ fun AnimateButton(
                     vertical = 11.dp
                 ),
             text = text,
-            color = Color.White
+            color = buttonTextColor
         )
     }
 }
