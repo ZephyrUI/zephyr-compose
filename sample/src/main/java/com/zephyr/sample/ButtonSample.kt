@@ -27,3 +27,22 @@ fun SimplyButton() {
         )
     }
 }
+
+@Composable
+fun SimplyOutlineButton() {
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+
+        AnimateButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp),
+            text = "Animated button",
+            isOutline = true,
+            onClick = { }
+        )
+    }
+}

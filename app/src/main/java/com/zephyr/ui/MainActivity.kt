@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.zephyr.foundations.core.theme.ZephyrTheme
 import com.zephyr.foundations.element.button.AnimateButton
 import com.zephyr.sample.SimplyButton
+import com.zephyr.sample.SimplyOutlineButton
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +26,7 @@ class MainActivity : ComponentActivity() {
 
             ZephyrTheme {
 
-                SimplyButton()
+                SimplyOutlineButton()
             }
         }
     }
