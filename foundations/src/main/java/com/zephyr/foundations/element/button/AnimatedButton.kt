@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -24,6 +25,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceIn
@@ -38,24 +40,20 @@ import kotlinx.coroutines.launch
  * @param text The text to display on the button.
  * @param enabled The button's activity status.
  * @param isOutline If `true`, the button will be rendered in an outline style (transparent background with a border).
- * @param color The color of the button's background when inactive.
- * @param pressedColor The background color of the button when pressed.
+ * @param colors Object for getting button colors in different states. See [ZephyrButtonColor].
  * @param cornerRadius Rounding the edges of the button.
- * @param textColor The text's color on the button. Ignored if [isOutline] is `true`.
  * @param softness The scale factor when the button is pressed. Must be between `0f` and `1f`.
  * @param onClick The lambda to be executed when the button is clicked.
  *
  * @sample com.zephyr.sample.SimplyButton
  * */
 @Composable
-fun AnimateButton(
+fun AnimatedButton(
     modifier: Modifier = Modifier,
     text: String,
     enabled: Boolean = true,
     isOutline: Boolean = false,
-    color: Color = TertiaryOne,
-    pressedColor: Color = PrimaryColor,
-    textColor: Color = Color.White,
+    colors: ZephyrButtonColor = ZephyrButtonColor(),
     cornerRadius: Dp = 8.dp,
     softness: Float = 0.98f,
     onClick: () -> Unit,
@@ -73,11 +71,11 @@ fun AnimateButton(
     val buttonColor by remember {
         derivedStateOf {
             when {
-                isOutline && isPressed -> pressedColor.copy(alpha = 0.1f)
+                isOutline && isPressed -> colors.pressedColor.copy(alpha = 0.1f)
                 isOutline -> Color.Transparent
-                !enabled -> DisableColor
-                isPressed -> pressedColor
-                else -> color
+                !enabled -> colors.disableColor
+                isPressed -> colors.pressedColor
+                else -> colors.inactiveColor
             }
         }
     }
@@ -85,9 +83,9 @@ fun AnimateButton(
     val borderColor by remember {
         derivedStateOf {
             when {
-                !enabled -> DisableColor
-                isPressed -> pressedColor
-                else -> color
+                !enabled -> colors.disableColor
+                isPressed -> colors.pressedColor
+                else -> colors.inactiveColor
             }
         }
     }
@@ -95,10 +93,10 @@ fun AnimateButton(
     val buttonTextColor by remember {
         derivedStateOf {
             when {
-                isOutline && !enabled -> DisableColor
-                isOutline && isPressed -> pressedColor
-                isOutline && !isPressed -> color
-                else -> textColor
+                isOutline && !enabled -> colors.disableColor
+                isOutline && isPressed -> colors.pressedColor
+                isOutline && !isPressed -> colors.inactiveColor
+                else -> colors.textColor
             }
         }
     }
@@ -160,5 +158,57 @@ fun AnimateButton(
             text = text,
             color = buttonTextColor
         )
+    }
+}
+
+/**
+ * A class containing the background and text colors of the button in different states.
+ * @param inactiveColor Button color when inactive.
+ * @param pressedColor Button color when pressed.
+ * @param disableColor Button color when disabled.
+ * @param textColor Button text color.
+ * */
+@Immutable
+class ZephyrButtonColor(
+    val inactiveColor: Color = TertiaryOne,
+    val pressedColor: Color = PrimaryColor,
+    val disableColor: Color = DisableColor,
+    val textColor: Color = Color.White
+) {
+
+    fun copy(
+        inactiveColor: Color = this.inactiveColor,
+        pressedColor: Color = this.pressedColor,
+        disableColor: Color = this.pressedColor,
+        textColor: Color = this.textColor
+    ) = ZephyrButtonColor(
+        inactiveColor.takeOrElse { this.inactiveColor },
+        pressedColor.takeOrElse { this.pressedColor },
+        disableColor.takeOrElse { this.disableColor },
+        textColor.takeOrElse { this.textColor },
+    )
+
+    override fun equals(other: Any?): Boolean {
+
+        if (this === other) return true
+        if (other == null || other !is ZephyrButtonColor) return false
+
+        if (inactiveColor != other.inactiveColor) return false
+        if (pressedColor != other.pressedColor) return false
+        if (disableColor != other.disableColor) return false
+        if (textColor != other.textColor) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+
+        var result = inactiveColor.hashCode()
+
+        result = 31 * result + pressedColor.hashCode()
+        result = 31 * result + disableColor.hashCode()
+        result = 31 * result + textColor.hashCode()
+
+        return result
     }
 }

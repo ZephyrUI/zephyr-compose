@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zephyr.foundations.element.button.AnimateButton
+import com.zephyr.foundations.element.button.AnimatedButton
 
 @Composable
 fun SimplyButton() {
@@ -18,12 +18,12 @@ fun SimplyButton() {
         contentAlignment = Alignment.Center
     ) {
 
-        AnimateButton(
+        AnimatedButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 30.dp),
             text = "Animated button",
-            onClick = { }
+            onClick = { /* Do something */ }
         )
     }
 }
@@ -36,13 +36,13 @@ fun SimplyOutlineButton() {
         contentAlignment = Alignment.Center
     ) {
 
-        AnimateButton(
+        AnimatedButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 30.dp),
             text = "Animated button",
             isOutline = true,
-            onClick = { }
+            onClick = { /* Do something */ }
         )
     }
 }
