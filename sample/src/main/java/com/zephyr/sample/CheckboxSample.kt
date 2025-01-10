@@ -10,7 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zephyr.foundations.element.choice_control.AnimateCheckbox
+import com.zephyr.foundations.element.choice_control.AnimatedCheckbox
 
 @Composable
 fun SimpleCheckbox() {
@@ -22,7 +22,7 @@ fun SimpleCheckbox() {
         contentAlignment = Alignment.Center
     ) {
 
-        AnimateCheckbox(
+        AnimatedCheckbox(
             isChecked = isChecked,
             onCheckedChange = { isChecked = it },
             size = 24.dp,
@@ -41,11 +41,12 @@ fun OutlineCheckbox() {
         contentAlignment = Alignment.Center
     ) {
 
-        AnimateCheckbox(
+        AnimatedCheckbox(
             isChecked = isChecked,
-            onCheckedChange = { isChecked = it },
+            isOutline = true,
             size = 24.dp,
-            cornerRadius = 4.dp
+            cornerRadius = 4.dp,
+            onCheckedChange = { isChecked = it }
         )
     }
 }
