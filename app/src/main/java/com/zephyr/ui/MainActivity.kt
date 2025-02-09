@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.zephyr.foundations.core.theme.ZephyrTheme
-import com.zephyr.sample.SimpleSwitch
+import com.zephyr.sample.SimplyButton
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
 
             ZephyrTheme {
 
-                SimpleSwitch()
+                SimplyButton()
             }
         }
     }

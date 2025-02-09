@@ -1,7 +1,9 @@
 package com.zephyr.foundations.element.button
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -101,6 +103,12 @@ fun AnimatedButton(
         }
     }
 
+    val animatedButtonColor by animateColorAsState(
+        targetValue = buttonColor,
+        animationSpec = tween(durationMillis = 200, easing = LinearOutSlowInEasing),
+        label = "Button color"
+    )
+
     LaunchedEffect(interactionSource) {
 
         interactionSource.interactions.collect { interaction ->
@@ -109,12 +117,22 @@ fun AnimatedButton(
 
                 is PressInteraction.Press -> {
                     isPressed = true
-                    scope.launch { scale.animateTo(buttonSoftness, animationSpec = spring()) }
+                    scope.launch {
+                        scale.animateTo(
+                            buttonSoftness,
+                            animationSpec = tween(durationMillis = 200, easing = LinearOutSlowInEasing)
+                        )
+                    }
                 }
 
                 is PressInteraction.Release, is PressInteraction.Cancel -> {
                     isPressed = false
-                    scope.launch { scale.animateTo(1f, animationSpec = spring()) }
+                    scope.launch {
+                        scale.animateTo(
+                            1f,
+                            animationSpec = tween(durationMillis = 200, easing = LinearOutSlowInEasing)
+                        )
+                    }
                 }
             }
         }
@@ -136,7 +154,7 @@ fun AnimatedButton(
         Canvas(modifier = Modifier.matchParentSize()) {
 
             drawRoundRect(
-                color = buttonColor,
+                color = animatedButtonColor,
                 cornerRadius = CornerRadius(cornerRadius.toPx())
             )
 
